@@ -1,4 +1,10 @@
 <?php $view->extend('layout.html.php')?>
-<?php $page = 2; ?>
+
+<?php
+/**
+ * @var $slots \Symfony\Component\Templating\Helper\SlotsHelper
+ */
+$slots = $view['slots'];
+?>
 
 <h1>BLOG</h1>
