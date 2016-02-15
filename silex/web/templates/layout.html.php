@@ -13,14 +13,14 @@ $slots = $view['slots'];
     <meta name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
     <title><?php $slots->output('title', 'Default title') ?></title>
-    <link rel="stylesheet" href="/vendor/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/vendor/bootsrap/dist/css/bootstrap-theme.min.css">
-    <link rel="stylesheet" href="/Custom.css">
-    <script src="/vendor/jquery/dist/jquery.min.js"></script>
-    <script src="/vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/vendor/bootstrap/dist/css/bootstrap.min.css">         <!--include bootstrap css-->
+    <link rel="stylesheet" href="/vendor/bootsrap/dist/css/bootstrap-theme.min.css">    <!--include bootsrap css alternate theme-->
+    <link rel="stylesheet" href="/Custom.css">                                          <!--include custom css-file-->
+    <script src="/vendor/jquery/dist/jquery.min.js"></script>                           <!--include java-script-->
+    <script src="/vendor/bootstrap/dist/js/bootstrap.min.js"></script>                  <!--include java-script (bootsrap)-->
 </head>
 <body>
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-default">                                                     <!--navigation bar-->
     <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">

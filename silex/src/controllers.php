@@ -3,38 +3,33 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @var $app Silex\Application
+ * @var $dbConnection Doctrine\DBAL\Connection
+ * @var $templating \Symfony\Component\Templating\DelegatingEngine
  */
+$templating = $app['templating'];
+$dbConnection = $app['db'];
 
-$app->get('/welcome/{name}', function ($name) use ($app) {
-    return $app['templating']->render(
-        'hello.html.php',
-        array('name' => $name)
-    );
-});
 
-$app->get('/welcome-twig/{name}', function ($name) use ($app) {
-    return $app['twig']->render(
-        'hello.html.twig',
-        array('name' => $name)
-    );
-});
-
-$app->get('/home', function () use ($app) {
-    return $app['templating']->render(
+$app->get('/home', function () use ($templating) {
+    return $templating->render(
         'home.html.php',
         array('active' => 'home')
     );
 });
 
-$app->get('/blog', function () use ($app) {
-    return $app['templating']->render(
+$app->get('/blog', function () use ($dbConnection,$templating) {
+        $content = $dbConnection->fetchAll('SELECT * FROM blog_post');
+    return $templating->render(
         'blog.html.php',
-        array('active' => 'blog')
+        array(
+            'active' => 'blog',
+            'content' => $content
+            )
     );
 });
 
-$app->get('/new', function () use ($app) {
-    return $app['templating']->render(
+$app->get('/new', function () use ($templating) {
+    return $templating->render(
         'new.html.php',
         array(
             'active' => 'new',
@@ -43,20 +38,16 @@ $app->get('/new', function () use ($app) {
             'error' => NULL
         )
     );
-}
-);
+});
 
 
-$app->match('/newPost', function (Request $request) use ($app) {
-    /**
-     * @var Doctrine\DBAL\Connection $dbConnection
-     */
-    if ($request->isMethod('POST')) {
+$app->match('/newPost', function (Request $request) use ($dbConnection,$templating) {
+        if ($request->isMethod('POST')) {
+
         $title = $request->get('title');
         $text = $request->get('text');
         $createdAt = date("c");
-        if ($title && $text) {
-            $dbConnection = $app['db'];
+        if ($title && $text){
             $dbConnection->insert(
                 'blog_post',
                 array(
@@ -65,7 +56,7 @@ $app->match('/newPost', function (Request $request) use ($app) {
                 'created_at' => $createdAt
                 )
             );
-            return $app['templating']->render(
+            return $templating->render(
                 'PostConfirm.html.php',
                 array(
                     'title' => $title,                       //transfer variables
@@ -75,7 +66,7 @@ $app->match('/newPost', function (Request $request) use ($app) {
                 )
             );
         } else {
-            return $app['templating']->render(
+            return $templating->render(
                 'new.html.php',
                 array(
                     'title' => $title,                       //transfer variables
@@ -86,13 +77,10 @@ $app->match('/newPost', function (Request $request) use ($app) {
             );
         }
     }
-}
-);
-
-$app->get('/db', function () use ($app) {
+});
 
 
+$app->get('/db', function () use ($app,$dbConnection) {
 
-    $dbConnection = $app['db'];
 
 });
