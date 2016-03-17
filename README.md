@@ -22,4 +22,9 @@ Project Structure
 * prefill your database: **sql/datamanipulation.sql**
 * add twig templates: **web/templates/**
 
-test
+Website Login
+-------------------
+* the login data are stored in the silex DB in 'user_login' table
+* there are two preset logins:
+      - username: user ; password: password
+      - username: nico ; password: p123
