@@ -9,11 +9,11 @@ $templating = $app['templating'];
 $dbConnection = $app['db'];
 
 $app->get('/home', function () use ($templating) {
-    return $templating->render(
+    return $templating->render(             //return 'home' template with an array
         'home.html.php',
         array(
-            'active' => 'home'
-        )
+            'active' => 'home'             //set 'home' to active (in template
+        )                                    //home it sets home active in the navbar)
     );
 });
 
@@ -28,10 +28,10 @@ $app->get('/blog', function () use ($dbConnection,$templating) {
     );
 });
 
-$app->get('/blog/{id}', function ($id, Request $request) use ($app,$dbConnection,$templating) {
+$app->get('/blog/{id}', function ($id) use ($app,$dbConnection,$templating) {
     $content = $dbConnection->fetchAssoc('SELECT * FROM blog_post WHERE id=?',array($id)); //Select only one post from a specific id
-    if(!$content){              //when Database is empty
-        $app->abort(404);
+    if(!$content){              //if Database is empty
+        $app->abort(404);       //display 404-error
     } else {
         return $templating->render(
             'blogDetail.html.php',
@@ -50,7 +50,6 @@ $app->get('/new', function () use ($templating) {
             'active' => 'new',
             'title' => '',
             'text' => '',
-            'error' => NULL
         )
     );
 });
@@ -62,9 +61,8 @@ $app->match('/newPost', function (Request $request) use ($dbConnection,$templati
         if ($request->isMethod('POST')) {
         $title = $request->get('title');                    //Get input from the textareas on newPost
         $text = $request->get('text');
-        $createdAt = date("c");
-        $author = $_SESSION['user'];
-        if ($title && $text){                               //if no input field is empty
+        $createdAt = date("c");                             //set current date to createdAt
+        $author = $_SESSION['user'];                        //set current user as author
             $dbConnection->insert(
                 'blog_post',
                 array(
@@ -79,22 +77,10 @@ $app->match('/newPost', function (Request $request) use ($dbConnection,$templati
                 array(
                     'title' => $title,
                     'text' => $text,
-                    'error' => false,                          //transfair that there was no error
-                    'active' => 'new'
-                )
-            );
-        } else {
-            return $templating->render(
-                'new.html.php',
-                array(
-                    'title' => $title,
-                    'text' => $text,
-                    'error' => true,                            //transfair that there was an error
                     'active' => 'new'
                 )
             );
         }
-    }
 });
 
 $app->match('/login', function (Request $request) use ($app,$templating,$dbConnection) {
@@ -102,17 +88,10 @@ $app->match('/login', function (Request $request) use ($app,$templating,$dbConne
     $user =  $request->get('user');
     $password =  $request->get('password');
     if(!$user || !$password) {
-        return $templating->render(
-            'login.html.php',
-            array(
-                'active' => 'login',
-                'user' => $user,
-                'password' => $password,
-                'login' => $login,
-                'empty' => true
-            )
-        );
+        $bool = true;
     } else {
+        $bool = false;
+    }
         return $templating->render(
             'login.html.php',
             array(
@@ -120,10 +99,9 @@ $app->match('/login', function (Request $request) use ($app,$templating,$dbConne
                 'user' => $user,
                 'password' => $password,
                 'login' => $login,
-                'empty' => false
+                'empty' => $bool            //transfair, if a field is empty
             )
         );
-    }
 });
 
 $app->get('/logout', function () use ($templating) {
